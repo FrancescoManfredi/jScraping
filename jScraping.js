@@ -1,4 +1,3 @@
-
 if (process.argv[2] === undefined) {
     // default scraping task
     var scrape = require('./tasks/default.js');
@@ -7,13 +6,13 @@ if (process.argv[2] === undefined) {
     var scrape = require(process.argv[2]);
 }
 
-
 // library to create the virtual browser
-var jsdom  = require('jsdom');
-var fs     = require('fs');
+const jsdom = require("jsdom");
+const { JSDOM } = jsdom;
+var fs = require('fs');
 var url = require('url');
 // jquery library to inject in the browser
-var jquery = fs.readFileSync('jquery-3.1.1.min.js');
+var jquery = require('./jquery-3.1.1.min.js');
 
 // pages to scrape content from
 var toVisit = scrape.initToVisit;
@@ -25,17 +24,15 @@ var nextUrlSelector = scrape.nextUrlSelector;
 // records to export in output file
 var records = [];
 
+// virtual console, because I don't want to see the long css parsing errors
+var vconsole = new jsdom.VirtualConsole();
+
 function scrapeAndRepeat(window) {
 
     if (window !== null && window !== undefined) {
-        /*
-         * when called with a window parameter we need to start the scraping
-         * for the document rendered in the current window.
-         */
+        
         var $ = window.$;
-
-        // The scraping function should also retrieve other urls to visit inside
-        // the page (if any)
+        
         scrape.scrape(window, $, toVisit, nextUrlSelector, records);
 
         // do I have a limit to records to keep in memory?
@@ -54,36 +51,28 @@ function scrapeAndRepeat(window) {
         next_url = toVisit.shift();
         scrape.visitedUrl.push(next_url);
         
-        jsdom.env({
-
-            url: next_url,
-            src: [
-            jquery
-            ],
-            done: function(errors, window) {
-                
-                if (errors == null) {
-                    console.log("Opening: " + window.location.href);
-                    return scrapeAndRepeat(window);
-                } else {
-
-                    
-                    // this will make us jump to the next url
-                    // before doing this we should try to recover from error.
-                    return scrapeAndRepeat(null);
-                    
-                    /*
-                     * The most common error is invalid url when you get relative
-                     * paths instead of absolute. If you edit the relative paths
-                     * before adding them to toVisit in the scrape.scrape()
-                     * function, that won't happen and we can crawl better.
-                     */
-                    
-                }
-
-            }
-
+        var options = {
+            runScripts: "dangerously",
+            pretendToBeVisual: true,
+            resources: "usable",
+            virtualConsole: vconsole
+        };
+        JSDOM.fromURL(next_url, options).then(function(dom){
+            var window = dom.window;
+            var $ = jquery(window);
+            $(window.document).ready(function(){
+                var timer = dom.window.setTimeout(function(){
+                    console.log("opening: " + dom.window.location.href);
+                    scrapeAndRepeat(window);
+                    window.clearTimeout(timer);
+                }, scrape.waitForPage);
+            });
+            
+        },
+        function(status){
+            console.log(status);
         });
+        
     } else {
         // all urls visited. Export all the records.
         if (records.length > 0)
@@ -99,7 +88,7 @@ function scrapeAndRepeat(window) {
  */
 
 function serializeAndWrite(data, filename) {
-    console.log(scrape.fileCount);
+
     var fn = filename;
     
     if (scrape.maxRecInMemory > 0) {
