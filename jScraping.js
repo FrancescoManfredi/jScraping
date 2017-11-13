@@ -50,7 +50,7 @@ function scrapeAndRepeat(window) {
     }
 
     // are there urls to visit? Let's visit the next.
-    if (toVisit.length > 0 && (scrape.stopAfter===0 || scrape.visitedUrl.length >= scrape.stopAfter)) {
+    if (toVisit.length > 0 && (scrape.stopAfter===0 || scrape.visitedUrl.length <= scrape.stopAfter)) {
         next_url = toVisit.shift();
         scrape.visitedUrl.push(next_url);
         
