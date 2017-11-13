@@ -104,7 +104,6 @@ function cleanAndPushUrl(candidateUrl, loc, toVisit) {
         }
         if (exports.visitedUrl.indexOf(candidateUrl)===-1) {
             toVisit.push(candidateUrl);
-            console.log("PUSHED URL: " + candidateUrl);
         }
     }
 }
