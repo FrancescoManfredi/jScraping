@@ -20,7 +20,7 @@ var records = [];
 
 function scrapeAndRepeat(window) {
 
-    if (window!=null) {
+    if (window !== null && window !== undefined) {
         /*
          * when called with a window parameter we need to start the scraping
          * for the document rendered in the current window.
@@ -45,7 +45,8 @@ function scrapeAndRepeat(window) {
     // are there urls to visit? Let's visit the next.
     if (toVisit.length > 0) {
         next_url = toVisit.shift();
-
+        scrape.visitedUrl.push(next_url);
+        
         jsdom.env({
 
             url: next_url,
@@ -94,10 +95,7 @@ function serializeAndWrite(data, filename) {
     var fn = filename;
     
     if (scrape.maxRecInMemory > 0) {
-        
-        if (scrape.fileCount > 0) {
-            var fn = "" + scrape.fileCount + "-" + filename;
-        }
+        var fn = "" + scrape.fileCount + "-" + filename;
         scrape.fileCount++;
     }
 

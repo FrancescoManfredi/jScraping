@@ -38,7 +38,7 @@ exports.filename = "output.json";
 // retrieved to free memory space.
 // This will write more than one file.
 // 0: just write to a single file once all the scraping is done.
-exports.maxRecInMemory = 0;
+exports.maxRecInMemory = 1;
 
 /*
  * This functions contains all the operations you want to perform on the current
@@ -66,25 +66,45 @@ exports.scrape = function(window, $, toVisit, nextUrlSelector, records) {
     // add this record to the records list
     records.push(r);
     
-    // grab links to the next pages
+    // grab and store links to visit
     var links = $(nextUrlSelector).filter('a');
     links.each(function(i,el){
-        if ($(el).attr('href')!= undefined && $(el).attr('href').charAt(0)!=='#') {
-            /*
-             * Need to edit relative paths before adding them.
-             */
-            toVisit.push($(el).attr('href'));
-        }
+        var candidateUrl = $(el).attr('href');
+        cleanAndPushUrl(candidateUrl, window.location, toVisit);
     });
     
-    // grab links in descendents of selectors element
+    // grab and store links to visit in descendents of selectors element
     var linksDesc = $(nextUrlSelector).find('a');
     linksDesc.each(function(i,el){
-        if ($(el).attr('href')!= undefined && $(el).attr('href').charAt(0)!=='#') {
-            toVisit.push($(el).attr('href'));
-        }
+        var candidateUrl = $(el).attr('href');
+        cleanAndPushUrl(candidateUrl, window.location, toVisit);
+        
     });
     
 };
 
-exports.fileCount = 0; // don't touch this
+exports.fileCount = 0; // to keep track of the number of output files
+
+exports.visitedUrl = []; // to keep track of visited urls
+
+function cleanAndPushUrl(candidateUrl, loc, toVisit) {
+    if (candidateUrl !== undefined && candidateUrl.charAt(0)!=='#') {
+        
+        if (candidateUrl.startsWith("//")) {
+            // urls with protocol omitted
+            candidateUrl = loc.protocol + candidateUrl;
+        } else if (candidateUrl.charAt(0)==='/') {
+            // path relative to origin
+            candidateUrl = loc.origin + candidateUrl;
+        } else if (!candidateUrl.startsWith('http')) {
+            // path relative to base url
+            var subpath = loc.split('/');
+            subpath.pop();
+            candidateUrl = loc.protocol + "//" + loc.origin + subpath.join('/') + "/" + candidateUrl;
+        }
+        if (exports.visitedUrl.indexOf(candidateUrl)===-1) {
+            toVisit.push(candidateUrl);
+            console.log("PUSHED URL: " + candidateUrl);
+        }
+    }
+}
