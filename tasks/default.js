@@ -28,9 +28,9 @@ exports.recordDescription = {
     "title": ["title",
         null], // page title
     "main_heading_font_size": ["h1",
-        function(el) { return el.css('font-size'); }], // font size of the main headline
+        function(el, $) { return el.css('font-size'); }], // font size of the main headline
     "first_paragraph": ["p",
-        function(el) { return el.first().text().split(' ').splice(0,5).join(' '); }] // first 5 words in the first paragraph in the page
+        function(el, $) { return el.first().text().split(' ').splice(0,5).join(' '); }] // first 5 words in the first paragraph in the page
 };
 
 // output file
@@ -65,7 +65,7 @@ exports.scrape = function(window, $, toVisit, nextUrlSelector, records) {
         if (exports.recordDescription[rk[i]][1] === null) {
             r[rk[i]] = $(exports.recordDescription[rk[i]][0]).text();
         } else {
-            r[rk[i]] = exports.recordDescription[rk[i]][1]($(exports.recordDescription[rk[i]][0]));
+            r[rk[i]] = exports.recordDescription[rk[i]][1]($(exports.recordDescription[rk[i]][0], $));
         }
     }
     
