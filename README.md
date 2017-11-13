@@ -76,9 +76,9 @@ As we can imagine from the logs **we now have two json files with scraped data**
 
 As we can see the default task scrapes data from wikipedia starting from the page about Fact Checking, gets the page title, the font size of the main heading and the first 5 words of the first paragraph.
   
-We can also notice that jScraper has created two files, named 0-output.json and 1-output.json, each with 10 records inside and has stopped after visiting 20 pages.
+We can also notice that jScraping has created two files, named 0-output.json and 1-output.json, each with 10 records inside and has stopped after visiting 20 pages.
   
-The **entirety of our scraper behavior is specified in the task file** we gave as an argument when we called jScraper from our command line (if we don't give any jScraper will execute the dafault.js task).
+The **entirety of our scraper behavior is specified in the task file** we gave as an argument when we called jScraping from our command line (if we don't give any jScraping will execute the dafault.js task).
   
 When we need to execute a scraping task we can either edit the default.js task file or copy it and build our own task.
 
@@ -87,7 +87,7 @@ When we need to execute a scraping task we can either edit the default.js task f
 | **Field** | **Description** | **Default** |
 |-------|-------------|---------|
 | **exports.initToVisit** | An array of **initial urls to visit**. If the scraping function does not add anything to the toVisit array, these will be the only visited pages. | `['https://en.wikipedia.org/wiki/Fact_checking']` |
-| **exports.nextUrlSelector** | A css selector to **retrieve further urls to visit** in each page. Can be an "a" tag or a different element. In the second case jScraper will search inside it for anchor tags. | `'a[href^="/wiki"]'` (all relative urls starting with "/wiki") |
+| **exports.nextUrlSelector** | A css selector to **retrieve further urls to visit** in each page. Can be an "a" tag or a different element. In the second case jScraping will search inside it for anchor tags. | `'a[href^="/wiki"]'` (all relative urls starting with "/wiki") |
 | **exports.recordDescription** | **What to grab and how to store it.** A dictionary in the form `{"key": ["selector", filterFunction]}` where **"key"** is the feature name we want, **"selector"** is the css selector of the DOM element in which to look for the feature we are looking for and **filterFunction** is a function that gets the selected DOM elements as a parameter and returns a string that will be used as value for our feature. **If null** $(selector).text() will be used as feature value. | `exports.recordDescription = {"title": ["title", null], "main_heading_font_size": ["h1", function(el) { return el.css('font-size'); }], "first_paragraph": ["p", function(el) { return el.first().text().split(' ').splice(0,5).join(' '); }]};` |
 | **exports.filename** | **Filename for the output file(s)** | "output.json" |
 | **exports.maxRecInMemory** | **Write to a file and remove the records from memory after this many records** are retrieved. It's a good idea to use this limit when you have to retrieve huge quantities of data. | 10 |
