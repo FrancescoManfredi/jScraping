@@ -1,5 +1,12 @@
-// standard scraping function
-var scrape = require('./tasks/default.js');
+
+if (process.argv[2] === undefined) {
+    // default scraping task
+    var scrape = require('./tasks/default.js');
+} else {
+    // user defined scraping task
+    var scrape = require(process.argv[2]);
+}
+
 
 // library to create the virtual browser
 var jsdom  = require('jsdom');

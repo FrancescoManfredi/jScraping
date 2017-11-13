@@ -38,7 +38,7 @@ exports.filename = "output.json";
 // retrieved to free memory space.
 // This will write more than one file.
 // 0: just write to a single file once all the scraping is done.
-exports.maxRecInMemory = 1;
+exports.maxRecInMemory = 0;
 
 /*
  * This functions contains all the operations you want to perform on the current
