@@ -6,10 +6,10 @@
 var exports = module.exports;
 
 // (initial) list of the urls to open for scraping.
-exports.initToVisit = ['https://it.wikipedia.org/wiki/Verifica_dei_fatti'];
+exports.initToVisit = ['https://en.wikipedia.org/wiki/Fact_checking'];
 
 // look for other urls to visit in these DOM elements and descendents
-exports.nextUrlSelector = 'a';
+exports.nextUrlSelector = 'a[href^="/wiki"]';
 
 /* 
  * what will your record look like?
@@ -25,10 +25,12 @@ exports.nextUrlSelector = 'a';
  *  kept as feature value.
  */
 exports.recordDescription = {
-    "title": ["title", null], // page title
-    "main_heading_size": ["h1", function(el) { return el.css('font-size'); }], // font size of the main headline
-    "num_of_headings": ["h1, h2, h3, h4, h5, h6", function(el) { return el.length; }], // number of headlines in the page
-    "first_paragraph": ["p", function(el) { return el.first().text(); }] // first paragraph in the page
+    "title": ["title",
+        null], // page title
+    "main_heading_font_size": ["h1",
+        function(el) { return el.css('font-size'); }], // font size of the main headline
+    "first_paragraph": ["p",
+        function(el) { return el.first().text().split(' ').splice(0,5).join(' '); }] // first 5 words in the first paragraph in the page
 };
 
 // output file
@@ -38,7 +40,11 @@ exports.filename = "output.json";
 // retrieved to free memory space.
 // This will write more than one file.
 // 0: just write to a single file once all the scraping is done.
-exports.maxRecInMemory = 0;
+exports.maxRecInMemory = 10;
+
+// stop after this many visited url
+// if 0 go on until toVisit array is empty
+exports.stopAfter = 20;
 
 /*
  * This functions contains all the operations you want to perform on the current
