@@ -19,7 +19,7 @@ exports.nextUrlSelector = 'a[href^="/wiki"]';
  * 
  * "key": the name of a feature to retrieve from the page.
  * "selector": the css selector of the element containing the value for this feature.
- * filterFunction: a function to manually handle the dom elemente. Gets the dom element 
+ * filterFunction: a function to manually handle the dom element. Gets the dom element 
  * (or elements) wrapped in a jQuery object and returns the desired data.
  *  If filter == null the text of the element (as in $(selector).text()) will be
  *  kept as feature value.
@@ -93,6 +93,9 @@ exports.fileCount = 0; // to keep track of the number of output files
 
 exports.visitedUrl = []; // to keep track of visited urls
 
+/*
+ * Filtering urls before adding them to the toVisit array
+ */
 function cleanAndPushUrl(candidateUrl, loc, toVisit) {
     if (candidateUrl !== undefined && candidateUrl.charAt(0)!=='#') {
         
