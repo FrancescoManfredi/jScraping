@@ -93,6 +93,7 @@ When we need to execute a scraping task we can either edit the default.js task f
 | **exports.maxRecInMemory** | **Write to a file and remove the records from memory after this many records** are retrieved. It's a good idea to use this limit when you have to retrieve huge quantities of data. | 10 |
 | **exports.stopAfter** | **Max number of pages to visit** | 20 |
 | **exports.scrape** | **The actual scraping function**. This function will execute in the context of the visited web page. It's like writing javascript code in the console of your browser while on the web page, plus you have jQuery and an array to store interesting urls to visit later (**toVisit**) and an array where to store records if you build one while on this page (**records**). The dafault function is quite complete, you shouldn't need to rewrite it for most tasks if you act on the other parameters. | (see source code in task/default.js) |
+| **exports.waitForPage** | Time to wait for a page to execute its own js code in ms | 200ms |
 
 
 ## Author
