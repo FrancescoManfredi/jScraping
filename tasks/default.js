@@ -46,7 +46,8 @@ exports.maxRecInMemory = 10;
 // if 0 go on until toVisit array is empty
 exports.stopAfter = 20;
 
-// time to wait for page to execute ajax requests
+// time to wait for page to execute ajax requests (in ms)
+// if < 1 no waiting time is set
 exports.waitForPage = 200;
 
 /*

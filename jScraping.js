@@ -61,11 +61,16 @@ function scrapeAndRepeat(window) {
             var window = dom.window;
             var $ = jquery(window);
             $(window.document).ready(function(){
-                var timer = dom.window.setTimeout(function(){
+                if (scrape.waitForPage > 0) {
+                    var timer = dom.window.setTimeout(function(){
+                        console.log("opening: " + dom.window.location.href);
+                        scrapeAndRepeat(window);
+                        window.clearTimeout(timer);
+                    }, scrape.waitForPage);
+                } else {
                     console.log("opening: " + dom.window.location.href);
                     scrapeAndRepeat(window);
-                    window.clearTimeout(timer);
-                }, scrape.waitForPage);
+                }
             });
             
         },
